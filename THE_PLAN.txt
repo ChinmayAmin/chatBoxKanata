@@ -1,4 +1,5 @@
 The plan is the following:
 1)Output message to all of the client via server
-2)Client to client
-3)Le client GUI
+2)Client to client - DONE
+3)Need to add prompt so client can give custom display name
+4)Le client GUI
