@@ -1,2 +1,4 @@
 The plan is the following:
--To Party and Have fun-
+1)Output message to all of the client via server
+2)Client to client
+3)Le client GUI
