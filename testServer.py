@@ -35,11 +35,15 @@ CONNECTED_CLIENTS.append(main_socket)
 print "started on port 5001 GG\n"
 
 while 1:
-
     #go through all of the readable connections
     #print "Right before going into the read loop.."
 
-    readable,writeable,error = select.select(CONNECTED_CLIENTS,[],[])
+    try:	
+    	readable,writeable,error = select.select(CONNECTED_CLIENTS,[],[])
+    except:
+	print "\nInterrupted meaning close the damn server..\n"
+	main_socket.close()
+	break
 
     #print "Right after select.select"
 
@@ -59,7 +63,16 @@ while 1:
 		#input from server side...for convinience
 		print "WHAT YOU DOING BRO\n"
 	else:
-		#data from client
-		data = read.recv(1024)
-		send_to_all(read,data)
+		try:
+			#data from client
+			data = read.recv(1024)
+			if data:
+				send_to_all(read,data)
+			else:
+				read.close()
+				print "A Client disconnected"
+				send_to_all(read,"A client disconnected\n")
+				CONNECTED_CLIENTS.remove(read)
+		except:
+			read.close()
 main_socket.close()
