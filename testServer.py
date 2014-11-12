@@ -14,6 +14,7 @@ HOST = '' #Leaving it blank means it applies to all avaiable hardware interfaces
 NUMBER_OF_CLIENTS = 5
 CONNECTED_CLIENTS = []
 ccount = 0;
+display_names = {}
 
 def send_to_all(sock,message):
 	#go through all of the client list
@@ -55,10 +56,20 @@ while 1:
 		newClient,add = main_socket.accept()
 		CONNECTED_CLIENTS.append(newClient)
 		ccount = ccount + 1
-		print 'Client number' + str(ccount) + ' connected'
+		print 'Client number ' + str(ccount) + ' connected'
 	
 		#only need to send the welcome message to new clients..
 		newClient.send("Welcome to kanata chat box!\n")
+
+		#ask the client to enter a display name of their choosing
+		newClient.send("Choose display name: ")
+		name = newClient.recv(1024)
+
+                #print out saying client (index) changed name to whatever
+		print 'Client number ' + str(ccount) + ' changed name to ' + str(name)
+		
+		#add it to the dictionary
+		display_names[ccount] = name
 	elif read == sys.stdin:
 		#input from server side...for convinience
 		print "WHAT YOU DOING BRO\n"
@@ -70,8 +81,14 @@ while 1:
 				send_to_all(read,data)
 			else:
 				read.close()
-				print "A Client disconnected"
-				send_to_all(read,"A client disconnected\n")
+
+				#find which client disconnected using the dictionary
+				index = CONNECTED_CLIENTS.index(read)
+                                output = "Client %s disconnected\n" % display_names[index]
+
+				print output
+				
+				send_to_all(read,output)
 				CONNECTED_CLIENTS.remove(read)
 		except:
 			read.close()
